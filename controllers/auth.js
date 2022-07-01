@@ -37,7 +37,7 @@ exports.registerUser = async (req, res) => {
 
   if (newUser) {
     res.cookie('token', token, {
-      secure: false, // set to true if you're using https
+      secure: true, // set to true if you're using https
       httpOnly: true,
     })
     return res.status(StatusCodes.CREATED).redirect('login')
@@ -70,7 +70,7 @@ exports.loginUser = async (req, res) => {
 
   const token = user.createJWT()
   res.cookie('token', token, {
-    secure: false, // set to true if you're using https
+    secure: true, // set to true if you're using https
     httpOnly: true,
   })
   return res.status(StatusCodes.OK).redirect('index')
@@ -78,7 +78,7 @@ exports.loginUser = async (req, res) => {
 
 exports.logout = async (req, res) => {
   await res.cookie('token', "", {
-    secure: false, // set to true if you're using https
+    secure: true, // set to true if you're using https
     httpOnly: true,
   })
   return res.status(StatusCodes.OK).redirect('login')
