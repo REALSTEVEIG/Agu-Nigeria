@@ -15,6 +15,7 @@ const cors = require('cors')
 const helmet = require('helmet')
 const xss = require('xss-clean')
 const expressRateLimitter = require('express-rate-limit')
+const tooManyRedirectsMiddleware = require('./middlewares/toomanyredirects')
 
 
 // Routes 
@@ -46,6 +47,7 @@ server.use('/', authMiddleware, htmlRouter)
 
 //error handlers
 server.use(errorhandlermiddleware)
+server.use(tooManyRedirectsMiddleware)
 server.use(notfoundMiddleware)
 
 //function to check database connection and start server

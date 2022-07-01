@@ -77,9 +77,6 @@ exports.loginUser = async (req, res) => {
 }
 
 exports.logout = async (req, res) => {
-  await res.cookie('token', "", {
-    secure: true, // set to true if you're using https
-    httpOnly: true,
-  })
+  await res.clearCookie('token')
   return res.status(StatusCodes.OK).redirect('login')
 }
