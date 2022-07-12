@@ -1,0 +1,76 @@
+[
+    {
+      "id" : 1,
+      "name": "Men",
+      "price": 2500,
+      "image" : "p1.png"
+    },
+    {
+      "id" : 2,
+      "name": "Men",
+      "price": 3500,
+      "image" : "p2.png"
+    },
+    {
+      "id" : 3,
+      "name": "Women",
+      "price": 3090,
+      "image" : "p3.png" 
+    },
+    {
+      "id" : 4,
+      "name": "Women",
+      "price": 1250,
+      "image" : "p4.png"
+    },
+    {
+      "id" : 5,
+      "name": "Men",
+      "price": 4000,
+      "image" : "p5.png"
+    },
+    {
+      "id" : 6,
+      "name": "Men",
+      "price": 4200,
+      "image" : "p6.png"
+    },
+    {
+      "id" : 7,
+      "name": "Men",
+      "price": 5000,
+      "image" : "p7.png"
+    },
+    {
+      "id" : 8,
+      "name": "Men",
+      "price": 5900,
+      "image" : "p8.png"
+    },
+    {
+      "id" : 9,
+      "name": "Men",
+      "price": 3900,
+      "image" : "p9.png"
+    },
+  
+    {
+      "id" : 10,
+      "name": "Men",
+      "price": 9900,
+      "image" : "p10.png"
+    },
+    {
+      "id" : 11,
+      "name": "Men",
+      "price": 3100,
+      "image" : "p11.png"
+    },
+    {
+      "id" : 12,
+      "name": "Men",
+      "price": 3000,
+      "image" : "p12.png"
+    }
+  ]
+  

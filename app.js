@@ -21,6 +21,7 @@ const tooManyRedirectsMiddleware = require('./middlewares/toomanyredirects')
 // Routes 
 const htmlRouter = require('./routes/htmlpages')
 const authRouter = require('./routes/auth')
+const paymentRouter = require('./routes/payment')
 
 //templating engine
 server.engine("handlebars", exphbs.engine({extname: ".handlebars", defaultLayout: false}));
@@ -28,6 +29,7 @@ server.set('view engine', 'handlebars')
 
 //allows us to access the public folder for js and css
 server.use('/public', express.static(path.join(__dirname, 'public')))
+server.use(express.static("uploads"));
 
 // parse user input in json format
 server.use(express.json())
@@ -44,6 +46,7 @@ server.use(cookieParser())
 //route functions
 server.use('/', authRouter)
 server.use('/', authMiddleware, htmlRouter)
+server.use('/', paymentRouter)
 
 //error handlers
 server.use(errorhandlermiddleware)

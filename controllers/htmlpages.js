@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken')
 const Contact = require('../models/contact')
 const Newsletter = require('../models/newsletter')
 
+const products = require('../products.json')
+
 const nodemailer = require('nodemailer')
 //Begining of Oauth configuration
 const { google } = require('googleapis')
@@ -17,7 +19,7 @@ exports.index = async (req, res) => {
     const token = req.cookies.token
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
-        return res.render('index', {name : payload.username})
+        return res.render('index', {name : payload.username, products})
     } catch (error) {
        // console.log(error)
     }
@@ -167,7 +169,7 @@ exports.contactSend = (req, res) => {
 }
 
 exports.product = (req, res) => {
-    res.render('product')
+    res.render('product', { products })
 }
 
 exports.testimonial = (req, res) => {
