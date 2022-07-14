@@ -1,19 +1,18 @@
 const jwt = require('jsonwebtoken')
 const Contact = require('../models/contact')
 const Newsletter = require('../models/newsletter')
-require('dotenv').config()
 
 const products = require('../products.json')
 
 const nodemailer = require('nodemailer')
 //Begining of Oauth configuration
 const { google } = require('googleapis')
-
+const config = require('../config')
 const { StatusCodes } = require('http-status-codes')
 const OAuth2 = google.auth.OAuth2
 
-const OAuth2_client = new OAuth2(process.env.clientId, process.env.clientSecret)
-OAuth2_client.setCredentials({refresh_token : process.env.refreshToken})
+const OAuth2_client = new OAuth2(config.clientId, config.clientSecret)
+OAuth2_client.setCredentials({refresh_token : config.refreshToken})
 //End of Oauth2 configuration
 
 exports.index = async (req, res) => {
@@ -59,16 +58,16 @@ exports.indexNewsletter = async (req, res) => {
         service : 'gmail',
         auth : {
             type : 'OAuth2',
-            user : process.env.user,
-            clientId : process.env.clientId,
-            clientSecret : process.env.clientSecret,
-            refreshToken : process.env.refreshToken,
+            user : config.user,
+            clientId : config.clientId,
+            clientSecret : config.clientSecret,
+            refreshToken : config.refreshToken,
             accessToken : accessToken
         }
     })
 
     let mailOptions = {
-        from : `AGU NIGERIA <${process.env.user}>`, // sender address
+        from : `AGU NIGERIA <${config.user}>`, // sender address
         to: `<${req.body.email}>`, // list of receivers   
         subject : 'Newsletter', // Subject line
         text : `Thank you for subscribing to our newsletter at Agu Nigeria. Henceforth you will be the first to receive updates on all our newest collections and jaw dropping mega deals!`     
@@ -84,8 +83,8 @@ exports.indexNewsletter = async (req, res) => {
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
-        from : `AGU NIGERIA <${process.env.user}>`, // sender address
-        to: `<${process.env.user}>`, // list of receivers
+        from : `AGU NIGERIA <${config.user}>`, // sender address
+        to: `<${config.user}>`, // list of receivers
         subject: `Message from a new subscriber!`, // Subject line
         html: output // html body
     };
@@ -132,16 +131,16 @@ exports.contactSend = (req, res) => {
         service : 'gmail',
         auth : {
             type : 'OAuth2',
-            user : process.env.user,
-            clientId : process.env.clientId,
-            clientSecret : process.env.clientSecret,
-            refreshToken : process.env.refreshToken,
+            user : config.user,
+            clientId : config.clientId,
+            clientSecret : config.clientSecret,
+            refreshToken : config.refreshToken,
             accessToken : accessToken
         }
     })
 
     let mailOptions = {
-        from : `AGU NIGERIA<${process.env.user}>`, // sender address
+        from : `AGU NIGERIA<${config.user}>`, // sender address
         to: `<${req.body.email}>`, // list of receivers   
         subject : 'Greetings!', // Subject line
         text : `Hello ${req.body.name}. Thank you for contacting Agu Nigeria. We have received your message and will get back to you as soon as possible!`     
@@ -155,8 +154,8 @@ exports.contactSend = (req, res) => {
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
-        from : `AGU NIGERIA<${process.env.user}>`, // sender address
-        to: `<${process.env.user}>`, // list of receivers
+        from : `AGU NIGERIA<${config.user}>`, // sender address
+        to: `<${config.user}>`, // list of receivers
         subject: `Message from ${req.body.name}!`, // Subject line
         html: output // html body
     };
