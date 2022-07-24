@@ -3,7 +3,7 @@ const Contact = require('../models/contact')
 const Newsletter = require('../models/newsletter')
 require('dotenv').config()
 
-const products = require('../products.json')
+const Products = require('../models/products')  //database 
 
 const nodemailer = require('nodemailer')
 //Begining of Oauth configuration
@@ -18,6 +18,7 @@ OAuth2_client.setCredentials({refresh_token : process.env.refreshToken})
 
 exports.index = async (req, res) => {
     const token = req.cookies.token
+    const products = await Products.find({})
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         return res.render('index', {name : payload.username, products, layout : 'landing'})
@@ -169,7 +170,8 @@ exports.contactSend = (req, res) => {
     });
 }
 
-exports.product = (req, res) => {
+exports.product = async (req, res) => {
+    const products = await Products.find({})
     res.render('product', { products , layout : 'pages'})
 }
 
