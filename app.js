@@ -7,7 +7,8 @@ const connectDB = require('./db/connect')
 const port = process.env.PORT || 3700
 const errorhandlermiddleware = require('./middlewares/errorhandler')
 const notfoundMiddleware = require('./middlewares/notfound')
-const exphbs = require('express-handlebars')
+const Handlebars = require('handlebars'); // first templating engine
+const exphbs = require('express-handlebars'); // second templating engine
 const path = require('path')
 const authMiddleware = require('./middlewares/authenticated')
 const cookieParser = require('cookie-parser')
@@ -24,8 +25,9 @@ const authRouter = require('./routes/auth')
 
 
 //templating engine
-server.engine("handlebars", exphbs.engine({extname: ".handlebars", defaultLayout: false}));
-server.set('view engine', 'handlebars')
+const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
+server.engine('handlebars', exphbs.engine({defaultLayout: 'main', handlebars: allowInsecurePrototypeAccess(Handlebars)})); // ...implement newly added insecure prototype access
+server.set('view engine', 'handlebars');
 
 //allows us to access the public folder for js and css
 server.use('/public', express.static(path.join(__dirname, 'public')))

@@ -20,7 +20,7 @@ exports.index = async (req, res) => {
     const token = req.cookies.token
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
-        return res.render('index', {name : payload.username, products})
+        return res.render('index', {name : payload.username, products, layout : 'landing'})
     } catch (error) {
        // console.log(error)
     }
@@ -100,11 +100,11 @@ exports.indexNewsletter = async (req, res) => {
 }
 
 exports.about = (req, res) => {
-    res.render('about')
+    res.render('about', {layout : 'pages'})
 }
 
 exports.contact = (req, res) => {
-    res.render('contact')
+    res.render('contact', {layout : 'pages'})
 }
 
 exports.contactSend = (req, res) => {
@@ -170,15 +170,15 @@ exports.contactSend = (req, res) => {
 }
 
 exports.product = (req, res) => {
-    res.render('product', { products })
+    res.render('product', { products , layout : 'pages'})
 }
 
 exports.testimonial = (req, res) => {
-    res.render('testimonial')
+    res.render('testimonial' , {layout : 'pages'})
 }
 
 exports.blog_list = (req, res) => {
-    res.render('blog_list')
+    res.render('blog_list' , {layout : 'pages'})
 }
 
 
