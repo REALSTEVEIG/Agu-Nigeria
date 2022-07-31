@@ -25,6 +25,7 @@ const authSchema = new mongoose.Schema({
 
 }, {timestamps: true})
 
+//pre or post save to determine if we want to effect the function before or after saving to the database
 
 authSchema.pre('save', async function () {
     const salt = await bcrypt.genSalt(10)
