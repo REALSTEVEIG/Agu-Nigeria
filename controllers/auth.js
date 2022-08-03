@@ -1,22 +1,11 @@
 const Auth = require('../models/auth')
 const {StatusCodes} = require('http-status-codes')
+const axios = require("axios");
+const options = require('../middlewares/externalapi')
 
 exports.registerPage = async (req, res) => {
-  const axios = require("axios");
-  const options = {
-    method: 'POST',
-    url: 'https://motivational-quotes1.p.rapidapi.com/motivation',
-    headers: {
-      'content-type': 'application/json',
-      'X-RapidAPI-Key': '092ca3a70bmsh05815545f73544bp144e8fjsn3f85ab4e267e',
-      'X-RapidAPI-Host': 'motivational-quotes1.p.rapidapi.com'
-    },
-    data: '{"key1":"value","key2":"value"}'
-  };
-
-  const quoteData = await axios.request(options)
-
- res.render('register', {quote : quoteData.data})
+    const quoteData = await axios.request(options)
+   res.render('register', {quote : quoteData.data})
 }
 
 exports.registerUser = async (req, res) => {
@@ -59,20 +48,8 @@ exports.registerUser = async (req, res) => {
 }
 
 exports.loginPage = async (req, res) => {
-  const axios = require("axios");
-  const options = {
-    method: 'POST',
-    url: 'https://motivational-quotes1.p.rapidapi.com/motivation',
-    headers: {
-      'content-type': 'application/json',
-      'X-RapidAPI-Key': '092ca3a70bmsh05815545f73544bp144e8fjsn3f85ab4e267e',
-      'X-RapidAPI-Host': 'motivational-quotes1.p.rapidapi.com'
-    },
-    data: '{"key1":"value","key2":"value"}'
-  };
-
   const quoteData = await axios.request(options)
- res.render('login', {quote : quoteData.data})
+   res.render('login', {quote : quoteData.data})
 }
 
 exports.loginUser = async (req, res) => {
