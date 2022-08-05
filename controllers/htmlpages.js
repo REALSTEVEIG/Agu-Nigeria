@@ -152,7 +152,7 @@ exports.contactSend = (req, res) => {
         if (error) {
             return console.log(error);
         }
-        return res.render('contact', {msg:'Your message has been sent successfully. Please check your email!'});
+        return res.render('contact', {msg:'Your message has been sent successfully. Please check your email!', layout : 'pages'});
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
