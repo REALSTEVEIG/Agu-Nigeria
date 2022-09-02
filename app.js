@@ -24,7 +24,7 @@ const htmlRouter = require('./routes/htmlpages')
 const authRouter = require('./routes/auth')
 
 
-//templating engine
+//templating engine express handlebars
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
 server.engine('handlebars', exphbs.engine({defaultLayout: 'main', handlebars: allowInsecurePrototypeAccess(Handlebars)})); // ...implement newly added insecure prototype access
 server.set('view engine', 'handlebars');
