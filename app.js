@@ -36,6 +36,8 @@ server.use(express.static("uploads"));
 // parse user input in json format
 server.use(express.json())
 server.use(express.urlencoded({extended: false}))
+
+//security
 server.set('trust proxy', 1)
 server.use(cors())
 server.use(helmet())
