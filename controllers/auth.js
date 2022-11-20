@@ -2,6 +2,7 @@ const Auth = require('../models/auth')
 const {StatusCodes} = require('http-status-codes')
 const axios = require("axios");
 const options = require('../middlewares/externalapi')
+const nodemailer = require('nodemailer')
 
 exports.registerPage = async (req, res) => {
     const quoteData = await axios.request(options)
@@ -39,6 +40,47 @@ exports.registerUser = async (req, res) => {
     password : req.body.password
   })
   const token = newUser.createJWT()
+
+  let transporter = nodemailer.createTransport({
+    service : 'gmail',
+    auth : {
+        user : process.env.user,
+        pass : process.env.pass
+    }
+})
+
+let mailOptions = {
+    from : `AGU NIGERIA <${process.env.user}>`, // sender address
+    to: `<${req.body.email}>`, // list of receivers   
+    subject : 'GREETINGS', // Subject line
+    text : `We would like to appreciate you for joining the biggest e-commerce family in West Africa!
+            We wish you greater stride as you move with us through this audacious journey`     
+}
+
+transporter.sendMail(mailOptions, (error) => {
+    if (error) {
+        console.log(error)
+    }
+    else {
+      console.log('Welcome message sent to new user')
+    }
+});
+
+let mailOptions2 = {        // This will send the mail to your email address
+    from : `AGU NIGERIA <${process.env.user}>`, // sender address
+    to: `<${process.env.user}>`, // list of receivers
+    subject: `NEW USER!`, // Subject line
+    text :  `A new user just signed up welcome ${req.body.email}`
+};
+
+transporter.sendMail(mailOptions2, (error) => {
+    if (error) {
+        return console.log(error);
+    }
+    else {
+      console.log('Response sent to your email')
+    }
+});
 
   if (newUser) {
     res.cookie('token', token, {
