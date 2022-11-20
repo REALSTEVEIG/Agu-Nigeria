@@ -1,20 +1,10 @@
+require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const Contact = require('../models/contact')
 const Newsletter = require('../models/newsletter')
-require('dotenv').config()
-
 const Products = require('../models/products')  //database 
-
 const nodemailer = require('nodemailer')
-//Begining of Oauth configuration
-const { google } = require('googleapis')
-
-const { StatusCodes } = require('http-status-codes')
-const OAuth2 = google.auth.OAuth2
-
-const OAuth2_client = new OAuth2(process.env.clientId, process.env.clientSecret)
-OAuth2_client.setCredentials({refresh_token : process.env.refreshToken})
-//End of Oauth2 configuration
+const {StatusCodes} = require('http-status-codes')
 
 exports.index = async (req, res) => {
     const token = req.cookies.token
@@ -55,16 +45,11 @@ exports.indexNewsletter = async (req, res) => {
 
    const data =  Newsletter.create({email}) //this will send the client's email to my database for future refrences
 
-    const accessToken = OAuth2_client.getAccessToken
     let transporter = nodemailer.createTransport({
         service : 'gmail',
         auth : {
-            type : 'OAuth2',
             user : process.env.user,
-            clientId : process.env.clientId,
-            clientSecret : process.env.clientSecret,
-            refreshToken : process.env.refreshToken,
-            accessToken : accessToken
+            pass : process.env.pass
         }
     })
 
@@ -128,16 +113,11 @@ exports.contactSend = (req, res) => {
 
     const data =  Contact.create({...req.body}) //this will send the client's message and information to my database for future refrences
 
-    const accessToken = OAuth2_client.getAccessToken
     let transporter = nodemailer.createTransport({
         service : 'gmail',
         auth : {
-            type : 'OAuth2',
             user : process.env.user,
-            clientId : process.env.clientId,
-            clientSecret : process.env.clientSecret,
-            refreshToken : process.env.refreshToken,
-            accessToken : accessToken
+            pass : process.env.pass
         }
     })
 
