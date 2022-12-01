@@ -214,7 +214,7 @@ exports.searchApi = async (req, res) => {
          const products = await result
          // console.log(products)
  
-         return res.render('index', {name : payload.username, products, layout : 'landing'})
+         return res.render('product', {name : payload.username, products, layout : 'landing'})
     } catch (error) {
          console.log(error)
          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).render('index')
