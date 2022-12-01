@@ -165,7 +165,7 @@ exports.blog_list = (req, res) => {
 }
 
 exports.searchPage = (req, res) => {
-    res.render('search', {layout : 'searchPage'} )
+    res.render('search', {layout : 'searchPage'})
 }
 
 exports.searchApi = async (req, res) => {
