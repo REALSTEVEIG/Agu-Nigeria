@@ -5,6 +5,7 @@ const Newsletter = require('../models/newsletter')
 const Products = require('../models/products')  //database 
 const nodemailer = require('nodemailer')
 const {StatusCodes} = require('http-status-codes')
+const {isArray, isEmpty} = require('lodash') //array methods in lodash
 
 exports.index = async (req, res) => {
     const token = req.cookies.token
@@ -164,3 +165,34 @@ exports.blog_list = (req, res) => {
 }
 
 
+exports.searchApi = async (req, res) => {
+    try {
+         const token = req.cookies.token
+         const payload = jwt.verify(token, process.env.JWT_SECRET);
+ 
+         const {searchQuery} = req.query
+         let queryObject = {}
+ 
+         if (searchQuery) {
+             queryObject.name =  {$regex : searchQuery, $options : 'xi'}
+         }
+ 
+         if (searchQuery === "") {
+            return res.status(StatusCodes.OK).redirect('index')
+         }
+ 
+         let result = Products.find({name : queryObject.name})
+     
+         const products = await result
+
+         if (isEmpty(products)) {
+             // console.log('empty array')
+             return res.status(StatusCodes.OK).redirect('index')
+         }
+ 
+         return res.render('index', {name : payload.username, products, layout : 'landing'})
+    } catch (error) {
+         console.log(error)
+         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).render('index')
+    }
+ }
