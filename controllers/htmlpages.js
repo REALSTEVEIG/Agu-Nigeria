@@ -164,31 +164,55 @@ exports.blog_list = (req, res) => {
     res.render('blog_list' , {layout : 'pages'})
 }
 
+exports.searchPage = (req, res) => {
+    res.render('search', {layout : 'searchPage'} )
+}
 
 exports.searchApi = async (req, res) => {
     try {
          const token = req.cookies.token
          const payload = jwt.verify(token, process.env.JWT_SECRET);
  
-         const {searchQuery} = req.query
+         const {searchQuery, name, amount} = req.query
          let queryObject = {}
  
          if (searchQuery) {
              queryObject.name =  {$regex : searchQuery, $options : 'xi'}
          }
  
-         if (searchQuery === "") {
-            return res.status(StatusCodes.OK).redirect('index')
+         if (name) {
+             queryObject.name =  {$regex : name, $options : 'xi'}
          }
  
-         let result = Products.find({name : queryObject.name})
-     
-         const products = await result
-
-         if (isEmpty(products)) {
-             // console.log('empty array')
-             return res.status(StatusCodes.OK).redirect('index')
+       
+         if (amount) {
+             let operatorMap = {
+                 "<" : "$lt",
+                 "<=" : "$lte",
+                 "=" : "$eq",
+                 ">" : "$gt",
+                 ">=" : "$gte"
+             }
+ 
+             const regEx = /\b(<|<=|=|>|>=)\b/g
+ 
+             let filter = amount.replace(regEx, (match) => `*${operatorMap[match]}*`)
+             // console.log(filter)
+ 
+             const options = ['price']
+ 
+             filter = filter.split(',').forEach((item) => {
+                 const [regex, operator, value] = item.split('*')
+                 if (options.includes(regex)) {
+                     queryObject[regex] = {[operator] : Number(value)}
+                 } 
+             })
          }
+         // console.log(queryObject)
+         let result = Products.find(queryObject)
+         
+         const products = await result
+         // console.log(products)
  
          return res.render('index', {name : payload.username, products, layout : 'landing'})
     } catch (error) {
@@ -196,3 +220,4 @@ exports.searchApi = async (req, res) => {
          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).render('index')
     }
  }
+ 

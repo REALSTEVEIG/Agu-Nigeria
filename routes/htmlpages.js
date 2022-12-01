@@ -2,7 +2,8 @@ const express = require('express')
 
 const router = express.Router()
 
-const {index, about, blog_list, contact, contactSend, product, testimonial, indexNewsletter, searchApi} = require('../controllers/htmlpages')
+const {index, about, blog_list, contact, contactSend, product, testimonial,
+     indexNewsletter, searchApi, searchPage} = require('../controllers/htmlpages')
 
 router.route('/index').get(index)
 router.route('/newsletter').post(indexNewsletter)
@@ -12,6 +13,7 @@ router.route('/contact').get(contact)
 router.route('/contact_send').post(contactSend)
 router.route('/product').get(product)
 router.route('/testimonial').get(testimonial)
+router.route('/searchpage').get(searchPage)
 router.route('/search').get(searchApi)
 
 module.exports = router
