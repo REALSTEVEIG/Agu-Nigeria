@@ -14,7 +14,8 @@ exports.index = async (req, res) => {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         return res.render('index', {name : payload.username, products, layout : 'landing'})
     } catch (error) {
-       // console.log(error)
+       console.log(error)
+       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).render('index')
     }
     
 }
