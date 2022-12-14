@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 const {index, about, blog_list, contact, contactSend, product, testimonial,
-     indexNewsletter, searchApi, searchPage} = require('../controllers/htmlpages')
+     indexNewsletter, searchApi, searchPage, value} = require('../controllers/htmlpages')
 
 router.route('/index').get(index)
 router.route('/newsletter').post(indexNewsletter)
@@ -17,5 +17,7 @@ router.route('/testimonial').get(testimonial)
 //search page
 router.route('/searchpage').get(searchPage)
 router.route('/search').get(searchApi)
+
+router.route('/value').post(value)
 
 module.exports = router

@@ -369,7 +369,7 @@
                   Our <span>products</span>
                </h2>
             </div>
-            <div class="row">
+            <div class="row" id="element-{{@index}}">
                {{#each products}}
                <div class="col-sm-6 col-md-4 col-lg-3">
                   <div class="box">
@@ -378,8 +378,10 @@
                            <a href="" class="option1">
                            Add To Cart
                            </a>
-                           <a href="/paystack/pay" class="option2">
+                           <a href="/product" class="option2">
                            Buy Now
+                              <pre style="display: none;">{{name}}</pre><br>
+                              <pre style="display: none;">{{price}}</pre>
                            </a>
                         </div>
                      </div>

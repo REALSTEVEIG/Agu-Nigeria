@@ -222,3 +222,36 @@ exports.searchApi = async (req, res) => {
     }
  }
  
+
+ exports.value = async (req, res) => {
+    try {
+        const {value} = req.body
+        const gender = value.split('>')[1]
+
+        let genderResult = ""
+        if (gender.startsWith('W')) {
+            genderResult = gender.slice(0, 5)  
+        }
+        
+        else if (gender.startsWith('M')) {
+            genderResult = gender.slice(0, 3)
+        }
+
+        const price = value.split('>')[4]
+        const priceResult = price.split('&')[0]
+        
+        // console.log(genderResult)
+        // console.log(priceResult)
+
+        const result = {
+            Gender : genderResult,
+            Price : Number(priceResult)
+        }
+
+        console.log(result)
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({error : error.message})
+    }
+}
