@@ -254,6 +254,7 @@ exports.searchApi = async (req, res) => {
 
     } catch (error) {
         console.log(error)
+        logger.error(error)
         return res.status(500).json({error : error.message})
     }
 }
