@@ -39,9 +39,7 @@ server.use(express.urlencoded({extended: false}))
 
 //security
 server.set('trust proxy', 1)
-server.use(cors({
-    origin : 'https://agunigeria.onrender.com'
-}))
+server.use(cors())
 server.use(helmet())
 server.use(xss())
 server.use(expressRateLimitter({windowsMs : 60 * 1000, max : 60}))

@@ -9,9 +9,23 @@ elements.forEach(element => {
     console.log(value)
 
     // Send the value to the server using an HTTP request
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://agunigeria.onrender.com/value', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({ value }));
+    // const xhr = new XMLHttpRequest();
+    // xhr.open('POST', 'https://agunigeria.onrender.com/value', true);
+    // xhr.setRequestHeader('Content-Type', 'application/json');
+    // xhr.send(JSON.stringify({ value }));
+
+    fetch('http://agunigeria.onrender.com/value', {
+      method: 'POST',
+      body: JSON.stringify({
+        value: value
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    // .then(response => response.json())
+    .then(data => {
+      // Do something with the response data
+    });
   });
 });
