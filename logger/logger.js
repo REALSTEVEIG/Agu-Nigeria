@@ -9,7 +9,7 @@ const logger = winston.createLogger({
   transports: [
     // Write to a file in production
     process.env.NODE_ENV === 'production'
-      ? new winston.transports.File({ filename: './logs/error.log', level: 'error' })
+      ? new winston.transports.File({ filename: './logs/logs.log' })
       // Use the console in development
       : new winston.transports.Console()
   ]
