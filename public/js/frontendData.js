@@ -10,7 +10,7 @@ elements.forEach(element => {
 
     // Send the value to the server using an HTTP request
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:3700/value', true);
+    xhr.open('POST', 'https://agunigeria.onrender.com/value', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify({ value }));
   });

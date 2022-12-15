@@ -6,6 +6,7 @@ const Products = require('../models/products')  //database
 const nodemailer = require('nodemailer')
 const {StatusCodes} = require('http-status-codes')
 const {isArray, isEmpty} = require('lodash') //array methods in lodash
+const logger = require('../logger/logger')
 
 exports.index = async (req, res) => {
     const token = req.cookies.token
@@ -249,6 +250,7 @@ exports.searchApi = async (req, res) => {
         }
 
         console.log(result)
+        logger.info(result)
 
     } catch (error) {
         console.log(error)
