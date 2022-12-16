@@ -2,7 +2,7 @@ const elements = document.querySelectorAll('[id^=element]');
 
 elements.forEach(element => {
   element.addEventListener('click', event => {
-    // event.preventDefault()
+    event.preventDefault()
     const clickedElement = event.target;
     const value = clickedElement.innerHTML; // or use clickedElement.textContent
 

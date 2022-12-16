@@ -273,7 +273,7 @@ exports.searchApi = async (req, res) => {
 
        console.log(response)
 
-       res.redirect(response.data.authorization_url)
+       return res.redirect(response.data.authorization_url)
     });
 
     } catch (error) {
