@@ -40,7 +40,12 @@ server.use(express.urlencoded({extended: false}))
 //security
 server.set('trust proxy', 1)
 server.use(cors())
-server.use(helmet())
+server.use(helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", 'checkout.paystack.com']
+    }
+  }));
 server.use(xss())
 server.use(expressRateLimitter({windowsMs : 60 * 1000, max : 60}))
 

@@ -7,6 +7,8 @@ const nodemailer = require('nodemailer')
 const {StatusCodes} = require('http-status-codes')
 const {isArray, isEmpty} = require('lodash') //array methods in lodash
 const logger = require('../logger/logger')
+const request = require('request');
+const {initializePayment, verifyPayment} = require('../config/paystack')(request) //Paystack
 
 exports.index = async (req, res) => {
     const token = req.cookies.token
@@ -224,12 +226,12 @@ exports.searchApi = async (req, res) => {
  }
  
 
- exports.value = async (req, res) => {
+ exports.payment = async (req, res) => {
     try {
         const {value} = req.body
+
         const gender = value.split('>')[1]
 
-        let genderResult = ""
         if (gender.startsWith('W')) {
             genderResult = gender.slice(0, 5)  
         }
@@ -239,18 +241,40 @@ exports.searchApi = async (req, res) => {
         }
 
         const price = value.split('>')[4]
-        const priceResult = price.split('&')[0]
+        priceResult = price.split('&')[0]
         
         // console.log(genderResult)
         // console.log(priceResult)
 
         const result = {
-            Gender : genderResult,
-            Price : Number(priceResult)
+            product : genderResult,
+            amount : Number(priceResult)
         }
 
-        console.log(result)
-        logger.info(result)
+        const token = req.cookies.token
+        const payload = jwt.verify(token, process.env.JWT_SECRET)
+
+        const form = {
+            full_name : payload.username,
+            email : payload.email,
+            product : result.product,
+            amount : result.amount * 100,
+        }
+
+        console.log(form)
+
+        initializePayment(form, (error, body)=>{
+        if(error){
+            //handle errors
+            console.log(error);
+            return;
+       }
+       response = JSON.parse(body);
+
+       console.log(response)
+
+       res.redirect(response.data.authorization_url)
+    });
 
     } catch (error) {
         console.log(error)

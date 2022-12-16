@@ -14,7 +14,7 @@ elements.forEach(element => {
     // xhr.setRequestHeader('Content-Type', 'application/json');
     // xhr.send(JSON.stringify({ value }));
 
-    fetch('https://agunigeria.onrender.com/value', {
+    fetch('https://agunigeria.onrender.com/paystack/pay', {
       method: 'POST',
       body: JSON.stringify({
         value: value

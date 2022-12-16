@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 const {index, about, blog_list, contact, contactSend, product, testimonial,
-     indexNewsletter, searchApi, searchPage, value} = require('../controllers/htmlpages')
+     indexNewsletter, searchApi, searchPage, payment} = require('../controllers/htmlpages')
 
 router.route('/index').get(index)
 router.route('/newsletter').post(indexNewsletter)
@@ -18,6 +18,6 @@ router.route('/testimonial').get(testimonial)
 router.route('/searchpage').get(searchPage)
 router.route('/search').get(searchApi)
 
-router.route('/value').post(value)
+router.route('/paystack/pay').post(payment)
 
 module.exports = router
