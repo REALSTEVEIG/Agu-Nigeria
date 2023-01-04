@@ -11,16 +11,15 @@ const request = require('request');
 const {initializePayment, verifyPayment} = require('../config/paystack')(request) //Paystack
 
 exports.index = async (req, res) => {
-    const token = req.cookies.token
     const products = await Products.find({})
+    console.log(req.user)
+    const username = await req.user.username
     try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET);
-        return res.render('index', {name : payload.username, products, layout : 'landing'})
+        return res.render('index', {name : username, products, layout : 'landing'})
     } catch (error) {
        console.log(error)
        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).render('index')
     }
-    
 }
 
 exports.indexNewsletter = async (req, res) => {

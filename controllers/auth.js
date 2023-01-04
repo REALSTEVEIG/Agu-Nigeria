@@ -1,132 +1,106 @@
-const Auth = require('../models/auth')
-const {StatusCodes} = require('http-status-codes')
+const User = require('../models/auth')
 const axios = require("axios");
 const options = require('../middlewares/externalapi')
 const nodemailer = require('nodemailer')
+const passport = require('passport')
 
 exports.registerPage = async (req, res) => {
     const quoteData = await axios.request(options)
    res.render('register', {quote : quoteData.data})
 }
 
-exports.registerUser = async (req, res) => {
-  const quoteData = await axios.request(options)
+exports.registerUser = async (req, res, next) => {
+  try {
+      const newUser = await User.register(
+          {username : req.body.username, email: req.body.email }, req.body.password)
 
-  const {username, email, password} = req.body
+          //Node-mailer session
 
-  if (!username || !email || !password) {
-    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `Please provide all the required credentials!`, quote : quoteData.data})
-  } 
+          let transporter = nodemailer.createTransport({
+            service : 'gmail',
+            auth : {
+                user : process.env.user,
+                pass : process.env.pass
+            }
+        })
 
-  const suppliedEmail = await Auth.findOne({email})
+          let mailOptions = {
+            from : `AGU NIGERIA <${process.env.user}>`, // sender address
+            to: `<${req.body.email}>`, // list of receivers   
+            subject : 'GREETINGS', // Subject line
+            text : `We would like to appreciate you for joining the biggest e-commerce family in West Africa!
+                    We wish you greater stride as you move with us through this audacious journey`     
+        }
+        
+        transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+                console.log(error)
+            }
+            else {
+              console.log('Welcome message sent to new user')
+            }
+        });
+        
+        let mailOptions2 = {        // This will send the mail to your email address
+            from : `AGU NIGERIA <${process.env.user}>`, // sender address
+            to: `<${process.env.user}>`, // list of receivers
+            subject: `NEW USER!`, // Subject line
+            text :  `A new user just signed up welcome ${req.body.email}`
+        };
+        
+        transporter.sendMail(mailOptions2, (error) => {
+            if (error) {
+                return console.log(error);
+            }
+            else {
+              console.log('Response sent to your email')
+            }
+        });
 
-  const suppliedUsername = await Auth.findOne({username})
-
-  if (suppliedEmail && suppliedUsername) {
-    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `The email and username you supplied already exists in our database. Please provide a different one`, quote : quoteData.data})
-  }
-
-  if (suppliedEmail) {
-    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `${req.body.email} already exists in our database. Please provide a different email.`, quote : quoteData.data})
-  }
-
-  if (suppliedUsername) {
-    return res.status(StatusCodes.BAD_REQUEST).render('register', {msg : `${req.body.username} already exists in our database. Please provide a different username.`, quote : quoteData.data})
-  }
-
-  const newUser = await Auth.create({
-    username : req.body.username,
-    email : req.body.email,
-    password : req.body.password
-  })
-  const token = newUser.createJWT()
-
-  let transporter = nodemailer.createTransport({
-    service : 'gmail',
-    auth : {
-        user : process.env.user,
-        pass : process.env.pass
+      res.redirect('login');
+    } catch (error) {
+      console.log(error)
+      res.render('register', { error : error.message });
     }
-})
-
-let mailOptions = {
-    from : `AGU NIGERIA <${process.env.user}>`, // sender address
-    to: `<${req.body.email}>`, // list of receivers   
-    subject : 'GREETINGS', // Subject line
-    text : `We would like to appreciate you for joining the biggest e-commerce family in West Africa!
-            We wish you greater stride as you move with us through this audacious journey`     
 }
 
-transporter.sendMail(mailOptions, (error) => {
-    if (error) {
-        console.log(error)
-    }
-    else {
-      console.log('Welcome message sent to new user')
-    }
-});
-
-let mailOptions2 = {        // This will send the mail to your email address
-    from : `AGU NIGERIA <${process.env.user}>`, // sender address
-    to: `<${process.env.user}>`, // list of receivers
-    subject: `NEW USER!`, // Subject line
-    text :  `A new user just signed up welcome ${req.body.email}`
-};
-
-transporter.sendMail(mailOptions2, (error) => {
-    if (error) {
-        return console.log(error);
-    }
-    else {
-      console.log('Response sent to your email')
-    }
-});
-
-  if (newUser) {
-    res.cookie('token', token, {
-      secure: true, // set to true if you're using https
-      httpOnly: true,
-    })
-    return res.status(StatusCodes.CREATED).redirect('login')
-   } 
-}
 
 exports.loginPage = async (req, res) => {
   const quoteData = await axios.request(options)
    res.render('login', {quote : quoteData.data})
 }
 
-exports.loginUser = async (req, res) => {
 
-  const quoteData = await axios.request(options)
+exports.loginUser = async (req, res, next) => {
+  try {
+      await passport.authenticate('local', (err, user, info) => {
 
-  const {email, password} = req.body
+        if (err) { 
+          return res.render('login', {error : info.message}) 
+      }
 
-  if (!email || !password) {
-    return res.status(StatusCodes.BAD_REQUEST).render('login', {msg : `Please provide all the required credentials!`, quote : quoteData.data})
-  }
- 
-  const user = await Auth.findOne({email})
+        if (!user) { 
+          return res.render('login', {error : info.message})
+       }
 
-  if (!user) {
-    return res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Email does not exist!`, quote : quoteData.data})
-  }
+        req.logIn(user, (err) => {
+          if (err) { 
+              return res.render('login', {error : info.message})
+          }
 
-  const isPasswordCorrect = await user.comparePassword(password)
-
-  if (!isPasswordCorrect) {
-    return res.status(StatusCodes.UNAUTHORIZED).render('login', {msg : `Password is incorrect!`, quote : quoteData.data})
-  }
-
-  const token = user.createJWT()
-  res.cookie('token', token, {
-    secure: true, // set to true if you're using https
-    httpOnly: true,
+      return res.redirect('/product');
+        
   })
-  return res.status(StatusCodes.OK).redirect('index')
+  })(req, res, next)
+
+    } catch (error) {
+      return res.render('login', {error : info.message});
+    }
 }
 
-exports.logout = async (req, res) => {
-  await res.clearCookie('token')
-  return res.status(StatusCodes.OK).redirect('login')
+
+exports.logout = (req, res) => {
+    req.session.destroy()
+    res.clearCookie('session-id')
+    res.redirect('/login')
 }

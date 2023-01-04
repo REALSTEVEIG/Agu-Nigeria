@@ -1,5 +1,6 @@
 require('dotenv').config()
 require('express-async-errors')
+require('./config/oauth_google')
 
 const express = require('express')
 const server = express()
@@ -13,10 +14,13 @@ const path = require('path')
 const authMiddleware = require('./middlewares/authenticated')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const helmet = require('helmet')
 const xss = require('xss-clean')
 const expressRateLimitter = require('express-rate-limit')
 const tooManyRedirectsMiddleware = require('./middlewares/toomanyredirects')
+const passport = require('passport')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
+const Auth = require('./models/auth')
 
 
 // Routes 
@@ -40,17 +44,49 @@ server.use(express.urlencoded({extended: false}))
 //security
 server.set('trust proxy', 1)
 server.use(cors())
-server.use(helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'", 'checkout.paystack.com']
-    }
-  }));
+server.use(function(req, res, next) {
+  res.header("Content-Security-Policy", "script-src 'self' kit.fontawesome.com ipt leostop.com checkout.paystack.com");
+  next();
+});
+
 server.use(xss())
 server.use(expressRateLimitter({windowsMs : 60 * 1000, max : 60}))
 
 //use the cookie parser middleware
 server.use(cookieParser())
+
+//express-session setup with mongostrore to store sessions in our database
+server.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+    cookie: {     
+        maxAge: 300000, // 5 minutes in milliseconds
+        httpOnly: true,
+        secure : true // set to true in production 
+    }
+  }))
+  
+  //passport initialize`
+  server.use(passport.initialize())
+  server.use(passport.session())
+  
+  //setup passport
+  passport.use(Auth.createStrategy());
+  passport.serializeUser(Auth.serializeUser());
+  passport.deserializeUser(Auth.deserializeUser());
+  
+  //signup with google
+  server.get('/auth/google',
+    passport.authenticate('google', { scope: ["email", "profile"] }));
+  
+  server.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function(req, res) {
+      // Successful authentication, redirect to dashboard.
+      res.redirect('/product');
+    });
 
 //route functions
 server.use('/', authRouter)
