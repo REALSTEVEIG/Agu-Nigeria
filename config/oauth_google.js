@@ -1,11 +1,19 @@
-const User = require('../models/auth')
+let callback;
+const User = require('../models/auth');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+if (process.env.NODE_ENV === 'development') {
+    callback = process.env.callbackURL_LOCAL
+}
+else {
+    callback = process.env.callbackURL_PROD
+}
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.callbackURL
+    callbackURL: callback
   }, async (request, accessToken, refreshToken, profile, done) => {
     try {
         console.log(profile)
