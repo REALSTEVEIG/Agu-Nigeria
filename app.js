@@ -2,6 +2,7 @@ require('dotenv').config()
 require('express-async-errors')
 require('./config/oauth_google')
 
+let bool
 const express = require('express')
 const server = express()
 const connectDB = require('./db/connect')
@@ -56,6 +57,14 @@ server.use(expressRateLimitter({windowsMs : 60 * 1000, max : 60}))
 server.use(cookieParser())
 
 //express-session setup with mongostrore to store sessions in our database
+
+if (process.env.NODE_ENV === 'development') {
+    bool = false
+}
+else {
+  bool = true
+}
+
 server.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -64,11 +73,11 @@ server.use(session({
     cookie: {     
         maxAge: 300000, // 5 minutes in milliseconds
         httpOnly: true,
-        secure : true // set to true in production 
+        secure : bool // set to true in production false on localhost
     }
   }))
   
-  //passport initialize`
+  //passport initialize
   server.use(passport.initialize())
   server.use(passport.session())
   
