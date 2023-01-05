@@ -1120,52 +1120,9 @@ form input[type="submit"]:focus {
     font-weight: 400;
 }
 
-
-.google_btn {
-  position: absolute;
-  top: 113.8%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: green;
-  display: inline-block;
-  width: 150px;
-  color: #fff;
-  border: none;
+.google {
+  position: relative;
+  left: 49%;
+  top : 5px;
   font-size: 25px;
-  font-weight: 600;
-  text-align: center;
-}
-
-@media (min-width: 300px) and (max-width: 643px) {
-  .google_btn {
-    position: absolute;
-    top: 120.8%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: green;
-    display: inline-block;
-    width: 150px;
-    color: #fff;
-    border: none;
-    font-size: 25px;
-    font-weight: 600;
-    text-align: center;
-  }
-}
-
-@media (min-width: 50px) and (max-width: 389px) {
-  .google_btn {
-    position: absolute;
-    top: 126.8%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: green;
-    display: inline-block;
-    width: 150px;
-    color: #fff;
-    border: none;
-    font-size: 25px;
-    font-weight: 600;
-    text-align: center;
-  }
 }

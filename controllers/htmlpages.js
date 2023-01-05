@@ -12,7 +12,7 @@ const {initializePayment, verifyPayment} = require('../config/paystack')(request
 
 exports.index = async (req, res) => {
     const products = await Products.find({})
-    console.log(req.user)
+    // console.log(req.user)
     const username = await req.user.username
     try {
         return res.render('index', {name : username, products, layout : 'landing'})
@@ -24,19 +24,15 @@ exports.index = async (req, res) => {
 
 exports.indexNewsletter = async (req, res) => {
     const { email } = req.body
-
     if (!email) {
-        const token = req.cookies.token
-        const payload = jwt.verify(token, process.env.JWT_SECRET)
-        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `Please provide your email address!`, name : payload.username})
+        let username = await req.user.username
+        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `Please provide your email address!`, name : username})
     }
 
     const user = await Newsletter.findOne({email})
 
     if (user) {
-        const token = req.cookies.token
-        const payload = jwt.verify(token, process.env.JWT_SECRET)
-        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `This email has already subscribed to our newsletter!`, name : payload.username})
+        return res.status(StatusCodes.BAD_REQUEST).render('index', {msg1 : `This email has already subscribed to our newsletter!`, name : username})
     } 
 
     const output = `
@@ -66,11 +62,9 @@ exports.indexNewsletter = async (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            return console.log(error);
+            console.log(error);
         }
-        const token = req.cookies.token
-        const payload = jwt.verify(token, process.env.JWT_SECRET)
-        return res.render('index', {msg:'Congratulations your email is now subscribed for our newsletters and product discounts!', name : payload.username});
+        return res.render('index', {msg:'Congratulations your email is now subscribed for our newsletters and product discounts!', name : username});
     });
 
     let mailOptions2 = {        // This will send the mail to your email address
@@ -82,9 +76,10 @@ exports.indexNewsletter = async (req, res) => {
 
     transporter.sendMail(mailOptions2, (error, info) => {
         if (error) {
-            return console.log(error);
+             console.log(error);
         }
-       return console.log('Sent')
+        console.log('Sent')
+       return res.status(200).render('index', {msg : 'Subscribed successfully!', name : username})
     });
 
 }
@@ -173,9 +168,9 @@ exports.searchPage = (req, res) => {
 
 exports.searchApi = async (req, res) => {
     try {
-         const token = req.cookies.token
-         const payload = jwt.verify(token, process.env.JWT_SECRET);
  
+        const username = req.user.username
+
          const {searchQuery, name, amount} = req.query
          let queryObject = {}
  
@@ -217,7 +212,7 @@ exports.searchApi = async (req, res) => {
          const products = await result
          // console.log(products)
  
-         return res.render('product', {name : payload.username, products, layout : 'landing'})
+         return res.render('product', {name : username, products, layout : 'landing'})
     } catch (error) {
          console.log(error)
          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).render('index')
