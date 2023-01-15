@@ -9,5 +9,4 @@ const options = {
     data: '{"key1":"value","key2":"value"}'
   };
 
-  
 module.exports = options
